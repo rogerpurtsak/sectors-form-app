@@ -2,7 +2,7 @@ services:
   postgres:
     image: postgres:17-alpine
     environment:
-      POSTGRES_DB: sectors_form
+      POSTGRES_DB: sectors_app
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
