@@ -52,6 +52,12 @@ docker compose up -d
 
 This starts PostgreSQL on port **5433** (5432 is reserved to avoid conflicts with a local PostgreSQL installation).
 
+To restore the database from the full dump:
+
+```bash
+docker compose exec -T postgres psql -U postgres -d sectors_app < database/dump.sql
+```
+
 | Setting  | Value          |
 |----------|----------------|
 | Database | `sectors_app`  |
