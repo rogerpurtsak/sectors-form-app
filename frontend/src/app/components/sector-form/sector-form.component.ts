@@ -1,8 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
 import { SectorService } from '../../services/sector.service';
-import { Sector } from '../../models/sector.model';
+import { UserProfileService } from '../../services/user-profile.service';
 import { SessionService } from '../../services/session.service';
+import { Sector } from '../../models/sector.model';
+import { UserProfileResponse } from '../../models/user-profile.model';
 
 function noWhitespace(control: AbstractControl): ValidationErrors | null {
   if (typeof control.value === 'string' && control.value.trim().length === 0 && control.value.length > 0) {
@@ -24,8 +27,9 @@ function atLeastOne(control: AbstractControl): ValidationErrors | null {
   templateUrl: './sector-form.component.html',
 })
 export class SectorFormComponent implements OnInit {
-  // this goes for the html for loop
   sectors: Sector[] = [];
+  successMessage = '';
+  errorMessage   = '';
 
   name         = new FormControl('',    [Validators.required, noWhitespace]);
   sectorIds    = new FormControl<number[]>([], atLeastOne);
@@ -37,24 +41,64 @@ export class SectorFormComponent implements OnInit {
     agreeToTerms: this.agreeToTerms,
   });
 
-  constructor(private sectorService: SectorService, private sessionService: SessionService) {}
+  constructor(
+    private sectorService: SectorService,
+    private userProfileService: UserProfileService,
+    private sessionService: SessionService
+  ) {}
 
   ngOnInit(): void {
+    // loads all the sectors and finds the profile
     this.sectorService.getAll().subscribe(sectors => {
       this.sectors = sectors;
+    });
+
+    const sessionId = this.sessionService.getSessionId();
+    this.userProfileService.getProfile(sessionId).subscribe({
+      next: profile => this.fillForm(profile),
+      error: (err: HttpErrorResponse) => {
+        // 404 means theres no profile so we leave it empty for now
+        if (err.status !== 404) {
+          this.errorMessage = 'Failed to load saved data.';
+        }
+      }
     });
   }
 
   onSubmit(): void {
     if (this.form.invalid) {
-      // if this activates then all the forms would go .touched and show red
+      // all .touched so forms go red
       this.form.markAllAsTouched();
       return;
     }
-    console.log(this.sessionService.getSessionId());
+
+    const request = {
+      sessionId:    this.sessionService.getSessionId(),
+      name:         this.name.value!,
+      sectorIds:    this.sectorIds.value!,
+      agreeToTerms: this.agreeToTerms.value!,
+    };
+
+    this.userProfileService.saveProfile(request).subscribe({
+      next: profile => {
+        this.fillForm(profile);
+        this.successMessage = 'Saved successfully!';
+        this.errorMessage   = '';
+      },
+      error: () => {
+        this.errorMessage   = 'Failed to save. Please try again.';
+        this.successMessage = '';
+      }
+    });
+  }
+
+  private fillForm(profile: UserProfileResponse): void {
+    this.name.setValue(profile.name);
+    this.sectorIds.setValue(profile.sectorIds);
+    this.agreeToTerms.setValue(profile.agreeToTerms);
   }
 
   indentedName(sector: Sector): string {
-    return ' '.repeat(sector.level * 4) + sector.name;
+    return ' '.repeat(sector.level * 4) + sector.name;
   }
 }

@@ -3,6 +3,13 @@
     Please enter your name and pick the Sectors you are currently involved in.
   </p>
 
+  @if (successMessage) {
+    <p class="text-green-600 text-sm">{{ successMessage }}</p>
+  }
+
+  @if (errorMessage) {
+    <p class="text-red-500 text-sm">{{ errorMessage }}</p>
+  }
   <form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col gap-5">
 
     <!-- name -->

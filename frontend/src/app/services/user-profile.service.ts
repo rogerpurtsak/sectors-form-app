@@ -1,19 +1,19 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { UserProfile } from '../models/user-profile.model';
+import { UserProfileRequest, UserProfileResponse } from '../models/user-profile.model';
 
 @Injectable({ providedIn: 'root' })
 export class UserProfileService {
-  private readonly apiUrl = 'http://localhost:8080/api/profiles';
+  private readonly apiUrl = 'http://localhost:8080/api/user-profile';
 
   constructor(private http: HttpClient) {}
 
-  save(profile: UserProfile): Observable<UserProfile> {
-    return this.http.post<UserProfile>(this.apiUrl, profile);
+  saveProfile(request: UserProfileRequest): Observable<UserProfileResponse> {
+    return this.http.post<UserProfileResponse>(this.apiUrl, request);
   }
 
-  update(id: number, profile: UserProfile): Observable<UserProfile> {
-    return this.http.put<UserProfile>(`${this.apiUrl}/${id}`, profile);
+  getProfile(sessionId: string): Observable<UserProfileResponse> {
+    return this.http.get<UserProfileResponse>(`${this.apiUrl}/${sessionId}`);
   }
 }

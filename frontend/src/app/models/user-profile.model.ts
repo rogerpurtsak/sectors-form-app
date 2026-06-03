@@ -1,6 +1,13 @@
-export interface UserProfile {
-  id?: number;
+export interface UserProfileRequest {
+  sessionId: string;
   name: string;
   sectorIds: number[];
-  agreedToTerms: boolean;
+  agreeToTerms: boolean;
+}
+
+export interface UserProfileResponse {
+  sessionId: string;
+  name: string;
+  sectorIds: number[];
+  agreeToTerms: boolean;
 }
