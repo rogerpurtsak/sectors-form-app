@@ -36,7 +36,7 @@ The assignment requires that a user can edit their own data during the current s
 ```
 sectors-form-app/
   frontend/   – Angular project
-  backend/    – Spring Boot application (Maven)
+  backend/    – Spring Boot application (Gradle)
   database/   – SQL schema and seed data
   README.md
   .gitignore
@@ -56,7 +56,7 @@ psql -U postgres -d sectors_form -f database/seed.sql
 
 ```bash
 cd backend
-./mvnw spring-boot:run
+./gradlew bootRun
 ```
 
 The API will be available at `http://localhost:8080`.
