@@ -105,6 +105,6 @@ export class SectorFormComponent implements OnInit {
   }
 
   indentedName(sector: Sector): string {
-    return ' '.repeat(sector.level * 4) + sector.name;
+    return ' '.repeat(sector.level * 4) + sector.name;
   }
 }
