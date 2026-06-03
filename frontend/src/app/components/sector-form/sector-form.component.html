@@ -1,73 +1,85 @@
 <div class="max-w-xl mx-auto mt-10 p-6 bg-white rounded-lg shadow">
-  <p class="mb-6 text-gray-700">
+
+  <h1 class="text-xl font-semibold mb-1">Sector Registration</h1>
+  <p class="mb-6 text-gray-500 text-sm">
     Please enter your name and pick the Sectors you are currently involved in.
   </p>
 
   @if (successMessage) {
-    <p class="text-green-600 text-sm">{{ successMessage }}</p>
+    <p role="status" class="mb-4 text-green-700 bg-green-50 border border-green-200 rounded px-3 py-2 text-sm">
+      {{ successMessage }}
+    </p>
+  }
+  @if (errorMessage) {
+    <p role="alert" class="mb-4 text-red-700 bg-red-50 border border-red-200 rounded px-3 py-2 text-sm">
+      {{ errorMessage }}
+    </p>
   }
 
-  @if (errorMessage) {
-    <p class="text-red-500 text-sm">{{ errorMessage }}</p>
-  }
   <form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col gap-5">
 
     <!-- name -->
     <div class="flex flex-col gap-1">
-      <label class="text-sm font-medium">Name:</label>
+      <label for="name" class="text-sm font-medium">Name:</label>
       <input
+        id="name"
         type="text"
         formControlName="name"
+        autocomplete="name"
         class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
       />
+      @if (name.invalid && name.touched) {
+        @if (name.errors?.['required']) {
+          <span class="text-red-500 text-xs">Name is required.</span>
+        }
+        @if (name.errors?.['whitespace']) {
+          <span class="text-red-500 text-xs">Name cannot contain only whitespace.</span>
+        }
+      }
     </div>
-
-    @if (name.invalid && name.touched) {
-      @if (name.errors?.['required']) {
-        <span class="text-red-500 text-xs">Name is required.</span>
-      }
-      @if (name.errors?.['whitespace']) {
-        <span class="text-red-500 text-xs">Name cannot contain only whitespace.</span>
-      }
-    }
 
     <!-- sectors -->
     <div class="flex flex-col gap-1">
-      <label class="text-sm font-medium">Sectors:</label>
-      <select
-        multiple
-        formControlName="sectorIds"
-        size="8"
-        class="border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
-      >
-      <!-- for loop from the ts component-->
-        @for (sector of sectors; track sector.id) {
-          <option [value]="sector.id">{{ indentedName(sector) }}</option>
-        }
-      </select>
-
-    @if (sectorIds.invalid && sectorIds.touched) {
-      <span class="text-red-500 text-xs">choose atleast one sector</span>
-    }
+      <label for="sectors" class="text-sm font-medium">Sectors:</label>
+      @if (sectorsLoading) {
+        <p class="text-gray-400 text-sm">Loading sectors...</p>
+      } @else {
+        <select
+          id="sectors"
+          multiple
+          formControlName="sectorIds"
+          size="8"
+          class="border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
+        >
+          @for (sector of sectors; track sector.id) {
+            <option [value]="sector.id">{{ indentedName(sector) }}</option>
+          }
+        </select>
+      }
+      @if (sectorIds.invalid && sectorIds.touched) {
+        <span class="text-red-500 text-xs">Please select at least one sector.</span>
+      }
     </div>
 
-    <!-- agree -->
-    <div class="flex items-center gap-2">
-      <input type="checkbox" formControlName="agreeToTerms" id="terms" />
-      <label for="terms" class="text-sm">Agree to terms</label>
+    <!-- agree to terms -->
+    <div class="flex flex-col gap-1">
+      <div class="flex items-center gap-2">
+        <input type="checkbox" formControlName="agreeToTerms" id="terms" />
+        <label for="terms" class="text-sm">Agree to terms</label>
+      </div>
+      @if (agreeToTerms.invalid && agreeToTerms.touched) {
+        <span class="text-red-500 text-xs">You must agree to the terms.</span>
+      }
     </div>
 
-    @if (agreeToTerms.invalid && agreeToTerms.touched) {
-      <span class="text-red-500 text-xs">u have to agree on the terms to submit</span>
-    }
-
-    <!-- save button-->
+    <!-- save button -->
     <div>
       <button
         type="submit"
-        class="bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700 transition-colors"
+        [disabled]="saving"
+        class="bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        Save
+        {{ saving ? 'Saving...' : 'Save' }}
       </button>
     </div>
 
