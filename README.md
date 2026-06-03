@@ -47,10 +47,17 @@ sectors-form-app/
 ### Database
 
 ```bash
-psql -U postgres -c "CREATE DATABASE sectors_form;"
-psql -U postgres -d sectors_form -f database/schema.sql
-psql -U postgres -d sectors_form -f database/seed.sql
+docker compose up -d
 ```
+
+This starts PostgreSQL on port **5433** (5432 is reserved to avoid conflicts with a local PostgreSQL installation).
+
+| Setting  | Value          |
+|----------|----------------|
+| Database | `sectors_app`  |
+| User     | `postgres`     |
+| Password | `postgres`     |
+| Port     | `5433`         |
 
 ### Backend
 
