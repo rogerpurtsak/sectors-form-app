@@ -11,6 +11,8 @@ import com.sectorsform.dto.UserProfileRequest;
 import com.sectorsform.dto.UserProfileResponse;
 import com.sectorsform.service.UserProfileService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/user-profile")
 public class UserProfileController {
@@ -21,8 +23,9 @@ public class UserProfileController {
         this.service = service;
     }
 
+    // @valid for validation on the annotations before starting the method
     @PostMapping
-    public UserProfileResponse save(@RequestBody UserProfileRequest request) {
+    public UserProfileResponse save(@Valid @RequestBody UserProfileRequest request) {
         return service.save(request);
     }
 
