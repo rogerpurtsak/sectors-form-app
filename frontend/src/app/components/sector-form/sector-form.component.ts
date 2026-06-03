@@ -27,9 +27,11 @@ function atLeastOne(control: AbstractControl): ValidationErrors | null {
   templateUrl: './sector-form.component.html',
 })
 export class SectorFormComponent implements OnInit {
-  sectors: Sector[] = [];
-  successMessage = '';
-  errorMessage   = '';
+  sectors: Sector[]  = [];
+  sectorsLoading     = true;
+  saving             = false;
+  successMessage     = '';
+  errorMessage       = '';
 
   name         = new FormControl('',    [Validators.required, noWhitespace]);
   sectorIds    = new FormControl<number[]>([], atLeastOne);
@@ -48,9 +50,9 @@ export class SectorFormComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // loads all the sectors and finds the profile
     this.sectorService.getAll().subscribe(sectors => {
       this.sectors = sectors;
+      this.sectorsLoading = false;
     });
 
     const sessionId = this.sessionService.getSessionId();
@@ -72,6 +74,8 @@ export class SectorFormComponent implements OnInit {
       return;
     }
 
+    this.saving = true;
+
     const request = {
       sessionId:    this.sessionService.getSessionId(),
       name:         this.name.value!,
@@ -84,10 +88,12 @@ export class SectorFormComponent implements OnInit {
         this.fillForm(profile);
         this.successMessage = 'Saved successfully!';
         this.errorMessage   = '';
+        this.saving         = false;
       },
       error: () => {
         this.errorMessage   = 'Failed to save. Please try again.';
         this.successMessage = '';
+        this.saving         = false;
       }
     });
   }
