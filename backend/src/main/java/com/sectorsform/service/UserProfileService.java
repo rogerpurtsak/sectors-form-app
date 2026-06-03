@@ -14,6 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -36,7 +37,11 @@ public class UserProfileService {
         profile.setSessionId(request.sessionId());
         profile.setName(request.name());
         profile.setAgreeToTerms(request.agreeToTerms());
-        profile.setSectors(new HashSet<>(sectorRepository.findAllById(request.sectorIds())));
+        Set<Sector> sectors = new HashSet<>(sectorRepository.findAllById(request.sectorIds()));
+        if (sectors.size() != new HashSet<>(request.sectorIds()).size()) {
+            throw new IllegalArgumentException("One or more sector IDs do not exist");
+        }
+        profile.setSectors(sectors);
 
         UserProfile saved = profileRepository.save(profile);
 
