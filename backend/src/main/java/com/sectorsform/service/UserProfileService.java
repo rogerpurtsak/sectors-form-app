@@ -9,6 +9,9 @@ import com.sectorsform.repository.UserProfileRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.util.HashSet;
 import java.util.List;
 
@@ -47,6 +50,19 @@ public class UserProfileService {
                 saved.getName(),
                 sectorIds,
                 saved.isAgreeToTerms()
+        );
+    }
+
+    public UserProfileResponse getBySessionId(String sessionId) {
+        UserProfile profile = profileRepository.findBySessionId(sessionId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        List<Integer> sectorIds = profile.getSectors().stream().map(Sector::getId).toList();
+        return new UserProfileResponse(
+                profile.getSessionId(),
+                profile.getName(),
+                sectorIds,
+                profile.isAgreeToTerms()
         );
     }
 }
