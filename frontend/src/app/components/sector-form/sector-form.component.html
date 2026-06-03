@@ -1,5 +1,51 @@
-<div class="form-container">
-  <h2>Please enter your name and pick the Sectors you are currently involved in.</h2>
-  <!-- Form implementation coming in next issue -->
-  <p>Form placeholder — implementation pending.</p>
+<div class="max-w-xl mx-auto mt-10 p-6 bg-white rounded-lg shadow">
+  <p class="mb-6 text-gray-700">
+    Please enter your name and pick the Sectors you are currently involved in.
+  </p>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col gap-5">
+
+    <!-- name -->
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium">Name:</label>
+      <input
+        type="text"
+        formControlName="name"
+        class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+      />
+    </div>
+
+    <!-- sectors -->
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium">Sectors:</label>
+      <select
+        multiple
+        formControlName="sectorIds"
+        size="8"
+        class="border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
+      >
+      <!-- for loop from the ts component-->
+        @for (sector of sectors; track sector.id) {
+          <option [value]="sector.id">{{ indentedName(sector) }}</option>
+        }
+      </select>
+    </div>
+
+    <!-- agree -->
+    <div class="flex items-center gap-2">
+      <input type="checkbox" formControlName="agreeToTerms" id="terms" />
+      <label for="terms" class="text-sm">Agree to terms</label>
+    </div>
+
+    <!-- save button-->
+    <div>
+      <button
+        type="submit"
+        class="bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700 transition-colors"
+      >
+        Save
+      </button>
+    </div>
+
+  </form>
 </div>
