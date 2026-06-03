@@ -1,22 +1,16 @@
 import { Injectable } from '@angular/core';
 
+const SESSION_KEY = 'sectors-form-session-id';
+
 @Injectable({ providedIn: 'root' })
 export class SessionService {
-  private savedProfileId: number | null = null;
 
-  getSavedProfileId(): number | null {
-    return this.savedProfileId;
-  }
-
-  setSavedProfileId(id: number): void {
-    this.savedProfileId = id;
-  }
-
-  hasSavedProfile(): boolean {
-    return this.savedProfileId !== null;
-  }
-
-  clear(): void {
-    this.savedProfileId = null;
+  getSessionId(): string {
+    let id = sessionStorage.getItem(SESSION_KEY);
+    if (!id) {
+      id = crypto.randomUUID();
+      sessionStorage.setItem(SESSION_KEY, id);
+    }
+    return id;
   }
 }

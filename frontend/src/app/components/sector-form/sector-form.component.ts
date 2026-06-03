@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { SectorService } from '../../services/sector.service';
 import { Sector } from '../../models/sector.model';
+import { SessionService } from '../../services/session.service';
 
 function noWhitespace(control: AbstractControl): ValidationErrors | null {
   if (typeof control.value === 'string' && control.value.trim().length === 0 && control.value.length > 0) {
@@ -36,7 +37,7 @@ export class SectorFormComponent implements OnInit {
     agreeToTerms: this.agreeToTerms,
   });
 
-  constructor(private sectorService: SectorService) {}
+  constructor(private sectorService: SectorService, private sessionService: SessionService) {}
 
   ngOnInit(): void {
     this.sectorService.getAll().subscribe(sectors => {
@@ -50,7 +51,7 @@ export class SectorFormComponent implements OnInit {
       this.form.markAllAsTouched();
       return;
     }
-    console.log('Form value:', this.form.value);
+    console.log(this.sessionService.getSessionId());
   }
 
   indentedName(sector: Sector): string {
