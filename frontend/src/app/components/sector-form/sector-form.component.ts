@@ -1,7 +1,21 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { SectorService } from '../../services/sector.service';
 import { Sector } from '../../models/sector.model';
+
+function noWhitespace(control: AbstractControl): ValidationErrors | null {
+  if (typeof control.value === 'string' && control.value.trim().length === 0 && control.value.length > 0) {
+    return { whitespace: true };
+  }
+  return null;
+}
+
+function atLeastOne(control: AbstractControl): ValidationErrors | null {
+  if (!control.value || control.value.length === 0) {
+    return { atLeastOne: true };
+  }
+  return null;
+}
 
 @Component({
   selector: 'app-sector-form',
@@ -9,11 +23,11 @@ import { Sector } from '../../models/sector.model';
   templateUrl: './sector-form.component.html',
 })
 export class SectorFormComponent implements OnInit {
-  // this goes to the html for loop
+  // this goes for the html for loop
   sectors: Sector[] = [];
 
-  name         = new FormControl('',    Validators.required);
-  sectorIds    = new FormControl<number[]>([], Validators.required);
+  name         = new FormControl('',    [Validators.required, noWhitespace]);
+  sectorIds    = new FormControl<number[]>([], atLeastOne);
   agreeToTerms = new FormControl(false, Validators.requiredTrue);
 
   form = new FormGroup({
@@ -31,9 +45,12 @@ export class SectorFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.form.valid) {
-      console.log('Form value:', this.form.value);
+    if (this.form.invalid) {
+      // if this activates then all the forms would go .touched and show red
+      this.form.markAllAsTouched();
+      return;
     }
+    console.log('Form value:', this.form.value);
   }
 
   indentedName(sector: Sector): string {

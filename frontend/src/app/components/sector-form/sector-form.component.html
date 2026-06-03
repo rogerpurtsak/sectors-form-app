@@ -15,6 +15,15 @@
       />
     </div>
 
+    @if (name.invalid && name.touched) {
+      @if (name.errors?.['required']) {
+        <span class="text-red-500 text-xs">Name is required.</span>
+      }
+      @if (name.errors?.['whitespace']) {
+        <span class="text-red-500 text-xs">Name cannot contain only whitespace.</span>
+      }
+    }
+
     <!-- sectors -->
     <div class="flex flex-col gap-1">
       <label class="text-sm font-medium">Sectors:</label>
@@ -29,6 +38,10 @@
           <option [value]="sector.id">{{ indentedName(sector) }}</option>
         }
       </select>
+
+    @if (sectorIds.invalid && sectorIds.touched) {
+      <span class="text-red-500 text-xs">choose atleast one sector</span>
+    }
     </div>
 
     <!-- agree -->
@@ -36,6 +49,10 @@
       <input type="checkbox" formControlName="agreeToTerms" id="terms" />
       <label for="terms" class="text-sm">Agree to terms</label>
     </div>
+
+    @if (agreeToTerms.invalid && agreeToTerms.touched) {
+      <span class="text-red-500 text-xs">u have to agree on the terms to submit</span>
+    }
 
     <!-- save button-->
     <div>
